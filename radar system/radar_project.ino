@@ -1,0 +1,74 @@
+#include "Arduino.h"
+#include<Servo.h>
+#include<NewPing.h>
+#define TRIGGER_PIN A1
+#define ECHO_PIN A0
+#define MAX_DISTANCE 100
+unsigned int Threshold=25; //this is the value if the sensor detects an object under this value we can turn on a buzzer for a period of time
+// you can use active or passive buzzer 
+// one can also include an rgb Led not smd since it will require an external source of power
+// and the led will light up showing different colors for different ranges of distance measure
+
+/*
+Components used:
+1)Arduino UNO
+2)Servo motor (SG90)
+3)Ultrasonic sensor(HC-SR04)
+4)Jumpire wires for establishing the connections
+5)Laptop for both powering and as Serial Monitor
+*/
+
+/*
+for example
+1)red=>very close
+2)blue=>close
+3)green=>not so close
+4)white=> far
+if using an active buzzer we can also assign diffrent sounds to these ranges which is not possible
+while using passive buzzer
+*/
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); //this gives us our sonar object
+
+Servo myServo; //this is our servo object
+void setup()
+{
+  Serial.begin(9600); //initiating the serial communication
+ myServo.attach(10);
+
+  //this bit of code controls the servo movement or should I say rotation
+  // we can alter the speed by changing the value of increment counter
+  myServo.write(90);
+ for(int pos=90;pos<=180;pos++)
+  {
+    myServo.write(pos);
+    delay(10);//introducing a delay we can decrease this delay if we want to increase the rotation speed
+    }
+    for(int pos=180;pos>=90;pos--)
+  {
+    myServo.write(pos);
+    delay(10);
+    }
+    for(int pos=90;pos>=0;pos--)
+  {
+    myServo.write(pos);
+    delay(10);
+    }
+ for(int pos=0;pos<=90;pos++)
+  {
+    myServo.write(pos);
+    delay(10);
+    }
+    
+ }
+
+void loop()
+{
+    unsigned int distance = sonar.ping_cm();//this will give us the distance measured by the Ultrasonic sensor
+   // we will display a warning only if an object's distance is less than a threshold value
+    if(distance<=Threshold)
+    {
+      Serial.println("Warning an object is detected");
+      Serial.println("The Object is detected at a distance of ");
+      Serial.print(distance);
+       }
+    }

@@ -1,0 +1,320 @@
+#include "SPI.h"
+#include "TFT_22_ILI9225.h"
+#include "math.h"
+
+
+#define TFT_RST A4
+#define TFT_RS  A3
+#define TFT_CS  A5  // SS
+#define TFT_SDI A2  // MOSI
+#define TFT_CLK A1  // SCK
+#define TFT_LED 0   // 0 if wired to +5V directly
+
+#define TFT_BRIGHTNESS 200 // Initial brightness of TFT backlight (optional)
+
+#define ROTATE_ANGLE 10 // Angle in degrees to rotate the triangl
+
+// Use hardware SPI (faster - on Uno: 13-SCK, 12-MISO, 11-MOSI)
+TFT_22_ILI9225 tft = TFT_22_ILI9225(TFT_RST, TFT_RS, TFT_CS, TFT_SDI, TFT_CLK, TFT_LED);
+
+
+
+// Setup
+void setup() {
+  tft.begin();
+  Serial.begin(9600);
+}
+
+// Loop
+void loop() {
+ //text_test();
+ //rectangle_test();
+ circle_test();
+}
+
+void text_test()
+{
+
+  tft.setFont(Terminal12x16);
+  tft.drawText(10,90,"JAI SHREE RAM",COLOR_ORANGE);
+  delay(1000);
+  tft.clear();
+  tft.setFont(Terminal6x8);
+  tft.drawText(10,10,"Roopa MC");
+  tft.setFont(Terminal6x8);
+  tft.drawText(10,20,"Remya MC");
+  tft.setFont(Terminal6x8);
+  tft.drawText(10,30,"HOD MC");
+  tft.setFont(Terminal6x8);
+  tft.drawText(10,40,"NIE MC");
+  tft.setFont(Terminal6x8);
+  tft.drawText(10,50,"VTU MC");
+  delay(100);
+  tft.clear();
+  // other option for font is 12x16
+  tft.setFont(Terminal12x16);
+  tft.drawText(10,10,"Roopa MC");
+  tft.setFont(Terminal12x16);
+  tft.drawText(10,40,"Remya MC");
+  tft.setFont(Terminal12x16);
+  tft.drawText(10,80,"HOD MC");
+  tft.setFont(Terminal12x16);
+  tft.drawText(10,120,"NIE MC");
+  tft.setFont(Terminal12x16);
+  tft.drawText(10,160,"VTU MC");
+  delay(100);
+  tft.clear();
+
+
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"State of relay1:");
+   tft.drawText(10,20,"State of relay2:");
+   tft.drawText(10,30,"State of relay3:");
+   tft.drawText(10,40,"State of relay4:");
+   tft.drawText(10,50,"State of relay5:");
+   tft.drawText(10,60,"State of relay6:");
+   tft.drawText(10,70,"State of relay7:");
+   tft.drawText(10,80,"State of relay8:");
+   tft.drawText(10,90,"State of relay9:");
+   tft.drawText(10,100,"State of relay10:");
+   tft.drawText(10,110,"State of relay11:");
+   tft.drawText(10,120,"State of relay12:");
+   tft.drawText(10,130,"State of relay13:");
+   tft.drawText(10,140,"State of relay14:");
+   tft.drawText(10,150,"State of relay15:");
+   tft.drawText(10,160,"State of relay16:");
+   delay(100);
+   tft.clear();
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"Doing a color test");
+   tft.setFont(Terminal12x16);
+   tft.drawText(10,30,"Roopa MC",COLOR_RED);
+   tft.drawText(10,60,"Remya MC",COLOR_RED);
+   tft.drawText(10,90,"HOD MC",COLOR_RED);
+   tft.drawText(10,120,"NIE MC",COLOR_RED);
+   tft.drawText(10,150,"VTU MC",COLOR_RED);
+   delay(100);
+   tft.clear();
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"Doing a color test");
+   tft.setFont(Terminal12x16);
+   tft.drawText(10,30,"Roopa MC",COLOR_BLUE);
+   tft.drawText(10,60,"Remya MC",COLOR_BLUE);
+   tft.drawText(10,90,"HOD MC",COLOR_BLUE);
+   tft.drawText(10,120,"NIE MC",COLOR_BLUE);
+   tft.drawText(10,150,"VTU MC",COLOR_BLUE);
+   delay(100);
+   tft.clear();
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"Doing a color test");
+   tft.setFont(Terminal12x16);
+   tft.drawText(10,30,"Roopa MC",COLOR_GREEN);
+   tft.drawText(10,60,"Remya MC",COLOR_GREEN);
+   tft.drawText(10,90,"HOD MC",COLOR_GREEN);
+   tft.drawText(10,120,"NIE MC",COLOR_GREEN);
+   tft.drawText(10,150,"VTU MC",COLOR_GREEN);
+   delay(100);
+   tft.clear();
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"Doing a color test");
+   tft.setFont(Terminal12x16);
+   tft.drawText(10,30,"Roopa MC",COLOR_ORANGE);
+   tft.drawText(10,60,"Remya MC",COLOR_ORANGE);
+   tft.drawText(10,90,"HOD MC",COLOR_ORANGE);
+   tft.drawText(10,120,"NIE MC",COLOR_ORANGE);
+   tft.drawText(10,150,"VTU MC",COLOR_ORANGE);
+   delay(100);
+   tft.clear();
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"Doing a color test");
+   tft.setFont(Terminal12x16);
+   tft.drawText(10,30,"Roopa MC",COLOR_YELLOW);
+   tft.drawText(10,60,"Remya MC",COLOR_YELLOW);
+   tft.drawText(10,90,"HOD MC",COLOR_YELLOW);
+   tft.drawText(10,120,"NIE MC",COLOR_YELLOW);
+   tft.drawText(10,150,"VTU MC",COLOR_YELLOW);
+   delay(100);
+   tft.clear();
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"Doing a color test");
+   tft.setFont(Terminal12x16);
+   tft.drawText(10,30,"Roopa MC",COLOR_VIOLET);
+   tft.drawText(10,60,"Remya MC",COLOR_VIOLET);
+   tft.drawText(10,90,"HOD MC",COLOR_VIOLET);
+   tft.drawText(10,120,"NIE MC",COLOR_VIOLET);
+   tft.drawText(10,150,"VTU MC",COLOR_VIOLET);
+   delay(100);
+   tft.clear();
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"Doing a color test");
+   tft.setFont(Terminal12x16);
+   tft.drawText(10,30,"Roopa MC",COLOR_CYAN);
+   tft.drawText(10,60,"Remya MC",COLOR_CYAN);
+   tft.drawText(10,90,"HOD MC",COLOR_CYAN);
+   tft.drawText(10,120,"NIE MC",COLOR_CYAN);
+   tft.drawText(10,150,"VTU MC",COLOR_CYAN);
+   delay(100);
+   tft.clear();
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"Doing a color test");
+   tft.setFont(Terminal12x16);
+   tft.drawText(10,30,"Roopa MC",COLOR_BROWN);
+   tft.drawText(10,60,"Remya MC",COLOR_BROWN);
+   tft.drawText(10,90,"HOD MC",COLOR_BROWN);
+   tft.drawText(10,120,"NIE MC",COLOR_BROWN);
+   tft.drawText(10,150,"VTU MC",COLOR_BROWN);
+   delay(100);
+   tft.clear();
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"Doing a color test");
+   tft.setFont(Terminal12x16);
+   tft.drawText(10,30,"Roopa MC",COLOR_MAGENTA);
+   tft.drawText(10,60,"Remya MC",COLOR_MAGENTA);
+   tft.drawText(10,90,"HOD MC",COLOR_MAGENTA);
+   tft.drawText(10,120,"NIE MC",COLOR_MAGENTA);
+   tft.drawText(10,150,"VTU MC",COLOR_MAGENTA);
+   delay(100);
+   tft.clear();
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"Doing a color test");
+   tft.setFont(Terminal12x16);
+   tft.drawText(10,30,"Roopa MC",COLOR_GRAY);
+   tft.drawText(10,60,"Remya MC",COLOR_GRAY);
+   tft.drawText(10,90,"HOD MC",COLOR_GRAY);
+   tft.drawText(10,120,"NIE MC",COLOR_GRAY);
+   tft.drawText(10,150,"VTU MC",COLOR_GRAY);
+   delay(100);
+   tft.clear();
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"Doing a background color check");
+   tft.setFont(Terminal12x16);
+   tft.setBackgroundColor(COLOR_RED);
+   tft.drawText(10,90,"JAI SHREE RAM",COLOR_WHITE);
+   delay(1000);
+   tft.setBackgroundColor(COLOR_BLUE);
+   tft.drawText(10,90,"JAI SHREE RAM",COLOR_WHITE);
+   delay(1000);
+   tft.setBackgroundColor(COLOR_GREEN);
+   tft.drawText(10,90,"JAI SHREE RAM",COLOR_WHITE);
+   delay(1000);
+   tft.setBackgroundColor(COLOR_YELLOW);
+   tft.drawText(10,90,"JAI SHREE RAM",COLOR_WHITE);
+   delay(1000);
+   tft.setBackgroundColor(COLOR_ORANGE);
+   tft.drawText(10,90,"JAI SHREE RAM",COLOR_WHITE);
+   delay(1000);
+   tft.setBackgroundColor(COLOR_CYAN);
+   tft.drawText(10,90,"JAI SHREE RAM",COLOR_WHITE);
+   delay(1000);
+   tft.setBackgroundColor(COLOR_MAGENTA);
+   tft.drawText(10,90,"JAI SHREE RAM",COLOR_WHITE);
+   delay(1000);
+   tft.setBackgroundColor(COLOR_BROWN);
+   tft.drawText(10,90,"JAI SHREE RAM",COLOR_WHITE);
+   delay(1000);
+   tft.setBackgroundColor(COLOR_GRAY);
+   tft.drawText(10,90,"JAI SHREE RAM",COLOR_BLACK);
+   delay(1000);
+   tft.setBackgroundColor(COLOR_VIOLET);
+   tft.drawText(10,90,"JAI SHREE RAM",COLOR_WHITE);
+   delay(1000);
+   tft.clear();
+   tft.setBackgroundColor(COLOR_BLACK);
+   tft.drawText(10,80,"Playing with backlight");
+   tft.setBacklight(HIGH);
+   tft.setBacklight(LOW);
+   tft.setFont(Terminal12x16);
+   tft.drawText(10,80,"Backligh OFF");
+   delay(1000);
+   tft.clear();
+   tft.setBacklight(HIGH);
+   tft.drawText(10,80,"Backligh OFF");
+   delay(1000);
+   tft.clear();
+  }
+
+void rectangle_test()
+{
+
+  tft.setFont(Terminal12x16);
+  tft.drawText(10,90,"REctangles");
+  tft.clear();
+  tft.drawRectangle(0,0,50,50,COLOR_RED);
+   tft.drawRectangle(60,0,110,50,COLOR_GREEN);
+   tft.drawRectangle(120,0,170,50,COLOR_BLUE);
+   tft.drawRectangle(0,60,50,110,COLOR_ORANGE);
+   tft.drawRectangle(60,60,110,110,COLOR_YELLOW);
+   tft.drawRectangle(120,60,170,110,COLOR_CYAN);
+   tft.drawRectangle(0,120,50,170,COLOR_MAGENTA);
+   tft.drawRectangle(60,120,110,170,COLOR_GRAY);
+   tft.drawRectangle(120,120,170,170,COLOR_WHITE);
+   tft.drawRectangle(0,180,50,210,COLOR_RED);
+   tft.drawRectangle(60,180,110,210,COLOR_GREEN);
+   tft.drawRectangle(120,180,170,210,COLOR_BLUE);
+   tft.clear();
+   delay(1000);
+   tft.drawRectangle(0,0,50,50,COLOR_RED);
+   tft.drawRectangle(0,0,60,60,COLOR_GREEN);
+   tft.drawRectangle(0,0,70,70,COLOR_BLUE);
+   tft.drawRectangle(0,0,80,80,COLOR_MAGENTA);
+   tft.drawRectangle(0,0,90,90,COLOR_CYAN);
+   tft.drawRectangle(0,0,100,100,COLOR_ORANGE);
+   tft.drawRectangle(0,0,110,110,COLOR_YELLOW);
+   tft.drawRectangle(0,0,120,120,COLOR_WHITE);
+   tft.drawRectangle(0,0,130,120,COLOR_BROWN);
+   tft.drawRectangle(0,0,140,140,COLOR_GRAY);
+   tft.drawRectangle(0,0,150,150,COLOR_RED);
+   tft.drawRectangle(0,0,160,160,COLOR_GREEN);
+   tft.drawRectangle(0,0,170,170,COLOR_BLUE);
+   delay(1000);
+   tft.clear();
+   tft.drawText(10,90,"Solid");
+   tft.drawText(10,110,"Rectangles");
+   tft.clear();
+   tft.fillRectangle(0,0,50,50,COLOR_RED);
+   tft.fillRectangle(60,0,110,50,COLOR_GREEN);
+   tft.fillRectangle(120,0,170,50,COLOR_BLUE);
+   tft.fillRectangle(0,60,50,110,COLOR_ORANGE);
+   tft.fillRectangle(60,60,110,110,COLOR_YELLOW);
+   tft.fillRectangle(120,60,170,110,COLOR_CYAN);
+   tft.fillRectangle(0,120,50,170,COLOR_MAGENTA);
+   tft.fillRectangle(60,120,110,170,COLOR_GRAY);
+   tft.fillRectangle(120,120,170,170,COLOR_WHITE);
+   tft.fillRectangle(0,180,50,210,COLOR_RED);
+   tft.fillRectangle(60,180,110,210,COLOR_GREEN);
+   tft.fillRectangle(120,180,170,210,COLOR_BLUE);
+   delay(1000);
+   tft.clear();
+   
+   
+   
+  tft.clear();
+  for(int j=10;j<=210;j=j+10)
+  {
+    for(int i=0;i<=170;i=i+10)
+  {
+    tft.drawRectangle(0,0,i,j,COLOR_GREEN);
+    }
+    }
+    tft.clear();
+    for(int j=10;j<=210;j=j+10)
+  {
+    for(int i=0;i<=170;i=i+10)
+  {
+    tft.drawRectangle(0,0,i,j,COLOR_BLUE);
+    }
+    }
+    tft.clear();
+  
+ }
+
+void circle_test()
+{
+tft.setFont(Terminal12x16);
+tft.drawText(30,110,"CIRCLE");
+delay(100);
+tft.clear();
+  
+  }
+
+  

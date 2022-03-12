@@ -1,0 +1,140 @@
+#include "SPI.h"
+#include "TFT_22_ILI9225.h"
+#include "math.h"
+
+
+#define TFT_RST A4
+#define TFT_RS  A3
+#define TFT_CS  A5  // SS
+#define TFT_SDI A2  // MOSI
+#define TFT_CLK A1  // SCK
+#define TFT_LED 0   // 0 if wired to +5V directly
+
+#define TFT_BRIGHTNESS 200 // Initial brightness of TFT backlight (optional)
+
+#define ROTATE_ANGLE 10 // Angle in degrees to rotate the triangl
+
+// Use hardware SPI (faster - on Uno: 13-SCK, 12-MISO, 11-MOSI)
+TFT_22_ILI9225 tft = TFT_22_ILI9225(TFT_RST, TFT_RS, TFT_CS, TFT_SDI, TFT_CLK, TFT_LED);
+
+
+
+// Setup
+void setup() {
+  tft.begin();
+  Serial.begin(9600);
+}
+
+// Loop
+void loop() {
+ text_test();
+}
+
+void text_test()
+{
+
+  tft.setFont(Terminal12x16);
+  tft.drawText(10,50,"JAI SHREE RAM",COLOR_ORANGE);
+  delay(1000);
+  tft.clear();
+  tft.setFont(Terminal6x8);
+  tft.drawText(10,10,"Roopa MC");
+  tft.setFont(Terminal6x8);
+  tft.drawText(10,20,"Remya MC");
+  tft.setFont(Terminal6x8);
+  tft.drawText(10,30,"HOD MC");
+  tft.setFont(Terminal6x8);
+  tft.drawText(10,40,"NIE MC");
+  tft.setFont(Terminal6x8);
+  tft.drawText(10,50,"VTU MC");
+  delay(1000);
+  tft.clear();
+  // other option for font is 12x16
+  tft.setFont(Terminal12x16);
+  tft.drawText(10,10,"Roopa MC");
+  tft.setFont(Terminal12x16);
+  tft.drawText(10,40,"Remya MC");
+  tft.setFont(Terminal12x16);
+  tft.drawText(10,80,"HOD MC");
+  tft.setFont(Terminal12x16);
+  tft.drawText(10,120,"NIE MC");
+  tft.setFont(Terminal12x16);
+  tft.drawText(10,160,"VTU MC");
+  delay(1000);
+  tft.clear();
+
+
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"State of relay1:");
+   tft.drawText(10,20,"State of relay2:");
+   tft.drawText(10,30,"State of relay3:");
+   tft.drawText(10,40,"State of relay4:");
+   tft.drawText(10,50,"State of relay5:");
+   tft.drawText(10,60,"State of relay6:");
+   tft.drawText(10,70,"State of relay7:");
+   tft.drawText(10,80,"State of relay8:");
+   tft.drawText(10,90,"State of relay9:");
+   tft.drawText(10,100,"State of relay10:");
+   tft.drawText(10,110,"State of relay11:");
+   tft.drawText(10,120,"State of relay12:");
+   tft.drawText(10,130,"State of relay13:");
+   tft.drawText(10,140,"State of relay14:");
+   tft.drawText(10,150,"State of relay15:");
+   tft.drawText(10,160,"State of relay16:");
+   delay(1000);
+   tft.clear();
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"Doing a color test");
+   tft.setFont(Terminal12x16);
+   tft.drawText(10,30,"Roopa MC",COLOR_RED);
+   tft.drawText(10,60,"Remya MC",COLOR_RED);
+   tft.drawText(10,90,"HOD MC",COLOR_RED);
+   tft.drawText(10,120,"NIE MC",COLOR_RED);
+   tft.drawText(10,150,"VTU MC",COLOR_RED);
+   delay(1000);
+   tft.clear();
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"Doing a color test");
+   tft.setFont(Terminal12x16);
+   tft.drawText(10,30,"Roopa MC",COLOR_BLUE);
+   tft.drawText(10,60,"Remya MC",COLOR_BLUE);
+   tft.drawText(10,90,"HOD MC",COLOR_BLUE);
+   tft.drawText(10,120,"NIE MC",COLOR_BLUE);
+   tft.drawText(10,150,"VTU MC",COLOR_BLUE);
+   delay(1000);
+   tft.clear();
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"Doing a color test");
+   tft.setFont(Terminal12x16);
+   tft.drawText(10,30,"Roopa MC",COLOR_GREEN);
+   tft.drawText(10,60,"Remya MC",COLOR_GREEN);
+   tft.drawText(10,90,"HOD MC",COLOR_GREEN);
+   tft.drawText(10,120,"NIE MC",COLOR_GREEN);
+   tft.drawText(10,150,"VTU MC",COLOR_GREEN);
+   delay(1000);
+   tft.clear();
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"Doing a color test");
+   tft.setFont(Terminal12x16);
+   tft.drawText(10,30,"Roopa MC",COLOR_ORANGE);
+   tft.drawText(10,60,"Remya MC",COLOR_ORANGE);
+   tft.drawText(10,90,"HOD MC",COLOR_ORANGE);
+   tft.drawText(10,120,"NIE MC",COLOR_ORANGE);
+   tft.drawText(10,150,"VTU MC",COLOR_ORANGE);
+   delay(1000);
+   tft.clear();
+   tft.setFont(Terminal6x8);
+   tft.drawText(10,10,"Doing a color test");
+   tft.setFont(Terminal12x16);
+   tft.drawText(10,30,"Roopa MC",COLOR_YELLOW);
+   tft.drawText(10,60,"Remya MC",COLOR_YELLOW);
+   tft.drawText(10,90,"HOD MC",COLOR_YELLOW);
+   tft.drawText(10,120,"NIE MC",COLOR_YELLOW);
+   tft.drawText(10,150,"VTU MC",COLOR_YELLOW);
+   delay(1000);
+   tft.clear();
+   
+  
+  
+  
+   }

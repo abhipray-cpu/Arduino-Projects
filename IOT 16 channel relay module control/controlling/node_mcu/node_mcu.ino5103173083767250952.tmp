@@ -1,0 +1,493 @@
+/*
+ * Many Thanks go to the following people who helped me out tremendously in getting this to work:
+ * Robin2 / Paul_KD7HB / Juraj
+ */
+
+#include <SoftwareSerial.h>
+#include<FirebaseESP8266.h>
+#include<ESP8266WiFi.h>
+#define WIFI_SSID "STARNET_A"
+#define WIFI_PASSWORD "kamalanita1@"
+#define FIREBASE_AUTH "J7zZWSjFYt1VW2h3Y6SgGz8JW7okCe1qrYYEnEe0"
+#define FIREBASE_HOST "channel-relay-control-3a865-default-rtdb.asia-southeast1.firebasedatabase.app/" 
+#define  Rx_PIN  4   // D2
+#define  Tx_PIN 0    // D3
+SoftwareSerial mySerial(Rx_PIN, Tx_PIN);//rx tx
+
+#define Gate A0 // Please ignore. This is only to activate ext power to transmitter
+
+//***************************************
+const byte numCharsSlave = 32;
+char receivedSlaveChars[numCharsSlave];
+char tempSlaveChars[numCharsSlave];        // temporary array for use when parsing
+
+// variables to hold the parsed data
+char messageFromSlave[numCharsSlave] = {0};
+int integer1Slave = 0;
+float float1Slave = 0.0;
+int integer2Slave;
+boolean newData = false; // invert this on Slave arduino
+
+static boolean recvInProgress = false;
+static byte ndx = 0;
+char startMarker = '<';
+char endMarker = '>';
+char rc;
+//***************************************
+unsigned long currentMillis1 = 0;
+unsigned long previousMillis1 = 0;
+long interval1 = 150;           // 150 milliseconds
+
+int relay1_state=0;
+int relay2_state=0;
+int relay3_state=0;
+int relay4_state=0;
+int relay5_state=0;
+int relay6_state=0;
+int relay7_state=0;
+int relay8_state=0;
+int relay9_state=0;
+int relay10_state=0;
+int relay11_state=0;
+int relay12_state=0;
+int relay13_state=0;
+int relay14_state=0;
+int relay15_state=0;
+int relay16_state=0;
+
+FirebaseData firebaseData;
+FirebaseJson json;
+
+void setup() {
+  Serial.begin(9600);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  Serial.print("Connecting to Wi-Fi");
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    Serial.print(".");
+    delay(300);
+  }
+   
+   Serial.println();
+   Serial.print("Connected with IP: ");
+   Serial.println(WiFi.localIP());
+   Serial.println();
+
+   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+  mySerial.begin(9600);
+  pinMode(Gate, OUTPUT);// Please ignore. This is only to activate ext power to transmitter
+  digitalWrite(Gate, LOW);// Please ignore. This is only to activate ext power to transmitter
+}
+//============
+void loop() {
+  
+    
+    update_values();
+  recvWithStartEndMarkers();
+  if (newData == true) {
+    strcpy(tempSlaveChars, receivedSlaveChars);// this temporary copy is necessary to protect the original data because strtok() used in parseData() replaces the commas with \0
+    parseData();
+    showParsedData();
+    newData = false;
+  }
+
+  currentMillis1 = millis();
+  if (currentMillis1 - previousMillis1 > interval1) {
+    previousMillis1 = currentMillis1;
+    sendDataToSlave ();
+  }
+} 
+// end of loop
+//============
+void recvWithStartEndMarkers() {
+  while (mySerial.available() > 0 && newData == false) {
+    rc = mySerial.read();
+    if (recvInProgress == true) {
+      if (rc != endMarker) {
+        receivedSlaveChars[ndx] = rc;
+        ndx++;
+        if (ndx >= numCharsSlave) {
+          ndx = numCharsSlave - 1;
+        }
+      }
+      else {
+        receivedSlaveChars[ndx] = '\0'; // terminate the string
+        recvInProgress = false;
+        ndx = 0;
+        newData = true;
+      }
+    }
+    else if (rc == startMarker) {
+      recvInProgress = true;
+    }
+  }
+}
+//============
+void parseData() {      // split the data into its parts
+  char * strtokIndx; // this is used by strtok() as an index
+  strtokIndx = strtok(tempSlaveChars, ",");     // get the first part - the string
+  strcpy(messageFromSlave, strtokIndx); // copy it to messageFromSlave
+  strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+  integer1Slave = atoi(strtokIndx);     // convert this part to an integer
+  strtokIndx = strtok(NULL, ",");
+  float1Slave = atof(strtokIndx);     // convert this part to a float
+  strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+  integer2Slave = atoi(strtokIndx);     // convert this part to an integer
+}
+//============
+void showParsedData() {
+  Serial.print("messageFromSlave ");
+  Serial.print(messageFromSlave);
+  Serial.print(" integer1Slave ");
+  Serial.print(integer1Slave);
+  Serial.print(" float1Slave ");
+  Serial.print(float1Slave);
+  Serial.print(" integer2Slave ");
+  Serial.println(integer2Slave);
+}
+//============
+void sendDataToSlave () {
+  mySerial.print('<');
+  mySerial.print("Master text");
+  mySerial.print(",");
+  mySerial.print(relay1_state);
+  mySerial.print(",");
+  mySerial.print(relay2_state);
+  mySerial.print(",");
+  mySerial.print(relay3_state);
+  mySerial.print(",");
+  mySerial.print(relay4_state);
+  mySerial.print(",");
+  mySerial.print(relay5_state);
+  mySerial.print(",");
+  mySerial.print(relay6_state);
+  mySerial.print(",");
+  mySerial.print(relay7_state);
+  mySerial.print(",");
+  mySerial.print(relay8_state);
+  mySerial.print(",");
+  mySerial.print(relay9_state);
+  mySerial.print(",");
+  mySerial.print(relay10_state);
+  mySerial.print(",");
+  mySerial.print(relay11_state);
+  mySerial.print(",");
+  mySerial.print(relay12_state);
+  mySerial.print(",");
+  mySerial.print(relay13_state);
+  mySerial.print(",");
+  mySerial.print(relay14_state);
+  mySerial.print(",");
+  mySerial.print(relay15_state);
+  mySerial.print(",");
+  mySerial.print(relay16_state);
+  mySerial.print('>');
+  //}
+}
+//this function will keep on updating the values in the loop function
+void update_values()
+{
+  relay1_state=relay1_controller();
+  relay2_state=relay2_controller();
+  relay3_state=relay3_controller();
+  relay4_state=relay4_controller();
+  relay5_state=relay5_controller();
+  relay6_state=relay6_controller();
+  relay7_state=relay7_controller();
+  relay8_state=relay8_controller();
+  relay9_state=relay9_controller();
+  relay10_state=relay10_controller();
+  relay11_state=relay11_controller();
+  relay12_state=relay12_controller();
+  relay13_state=relay13_controller();
+  relay14_state=relay14_controller();
+  relay15_state=relay15_controller();
+  relay16_state=relay16_controller();
+ }
+
+//these functions are all used to retrieve the values from the firebase real time database
+int relay1_controller()
+{
+  if (Firebase.getString(firebaseData, "/relay1")){
+    Serial.print("State of relay1:");
+    Serial.println(firebaseData.stringData());
+    if(firebaseData.stringData() == "off")
+    {
+      return 0;
+      }
+      else if(firebaseData.stringData() == "on")
+      {
+        return 1;
+        }
+   
+    
+     }
+  }
+
+int relay2_controller()
+{
+  if (Firebase.getString(firebaseData, "/relay2")){
+    Serial.print("State of relay2:");
+    Serial.println(firebaseData.stringData());
+    if(firebaseData.stringData() == "off")
+    {
+      return 0;
+      }
+      else if(firebaseData.stringData() == "on")
+      {
+        return 1;
+        }
+   
+    
+     }
+  }
+
+int relay3_controller()
+{
+  if (Firebase.getString(firebaseData, "/relay3")){
+    Serial.print("State of relay3:");
+    Serial.println(firebaseData.stringData());
+    if(firebaseData.stringData() == "off")
+    {
+      return 0;
+      }
+      else if(firebaseData.stringData() == "on")
+      {
+        return 1;
+        }
+   
+     
+     }
+  }
+
+int relay4_controller()
+{
+  if (Firebase.getString(firebaseData, "/relay4")){
+    Serial.print("State of relay4:");
+    Serial.println(firebaseData.stringData());
+    if(firebaseData.stringData() == "off")
+    {
+      return 0;
+      }
+      else if(firebaseData.stringData() == "on")
+      {
+        return 1;
+        }
+    
+    
+     }
+  }
+
+int relay5_controller()
+{
+  if (Firebase.getString(firebaseData, "/relay5")){
+    Serial.print("State of relay5:");
+    Serial.println(firebaseData.stringData());
+    if(firebaseData.stringData() == "off")
+    {
+      return 0;
+      }
+      else if(firebaseData.stringData() == "on")
+      {
+        return 1;
+        }
+  
+    
+     }
+  }
+
+int relay6_controller()
+{
+  if (Firebase.getString(firebaseData, "/relay6")){
+    Serial.print("State of relay6:");
+    Serial.println(firebaseData.stringData());
+    if(firebaseData.stringData() == "off")
+    {
+      return 0;
+      }
+      else if(firebaseData.stringData() == "on")
+      {
+        return 1;
+        }
+   
+     
+     }
+  }
+
+int relay7_controller()
+{
+  if (Firebase.getString(firebaseData, "/relay7")){
+    Serial.print("State of relay7:");
+    Serial.println(firebaseData.stringData());
+    if(firebaseData.stringData() == "off")
+    {
+      return 0;
+      }
+      else if(firebaseData.stringData() == "on")
+      {
+        return 1;
+        }
+    
+    
+     }
+  }
+
+ int relay8_controller()
+{
+  if (Firebase.getString(firebaseData, "/relay8")){
+    Serial.print("State of relay8:");
+    Serial.println(firebaseData.stringData());
+    if(firebaseData.stringData() == "off")
+    {
+      return 0;
+      }
+      else if(firebaseData.stringData() == "on")
+      {
+        return 1;
+        }
+   
+   
+     }
+  }
+
+ int relay9_controller()
+{
+  if (Firebase.getString(firebaseData, "/relay9")){
+    Serial.print("State of relay9:");
+    Serial.println(firebaseData.stringData());
+    if(firebaseData.stringData() == "off")
+    {
+      return 0;
+      }
+      else if(firebaseData.stringData() == "on")
+      {
+        return 1;
+        }
+   
+     
+     }
+  }
+
+int relay10_controller()
+{
+  if (Firebase.getString(firebaseData, "/relay10")){
+    Serial.print("State of relay10:");
+    Serial.println(firebaseData.stringData());
+    if(firebaseData.stringData() == "off")
+    {
+      return 0;
+      }
+      else if(firebaseData.stringData() == "on")
+      {
+        return 1;
+        }
+   
+   
+     }
+  }
+
+int relay11_controller()
+{
+  if (Firebase.getString(firebaseData, "/relay11")){
+    Serial.print("State of relay11:");
+    Serial.println(firebaseData.stringData());
+    if(firebaseData.stringData() == "off")
+    {
+      return 0;
+      }
+      else if(firebaseData.stringData() == "on")
+      {
+        return 1;
+        }
+    
+    
+     }
+  }
+
+int relay12_controller()
+{
+  if (Firebase.getString(firebaseData, "/relay12")){
+    Serial.print("State of relay12:");
+    Serial.println(firebaseData.stringData());
+    if(firebaseData.stringData() == "off")
+    {
+      return 0;
+      }
+      else if(firebaseData.stringData() == "on")
+      {
+        return 1;
+        }
+    
+     
+     }
+  }
+
+int relay13_controller()
+{
+  if (Firebase.getString(firebaseData, "/relay13")){
+    Serial.print("State of relay13:");
+    Serial.println(firebaseData.stringData());
+    if(firebaseData.stringData() == "off")
+    {
+      return 0;
+      }
+      else if(firebaseData.stringData() == "on")
+      {
+        return 1;
+        }
+   
+    
+     }
+  }
+
+int relay14_controller()
+{
+  if (Firebase.getString(firebaseData, "/relay14")){
+    Serial.print("State of relay14:");
+    Serial.println(firebaseData.stringData());
+    if(firebaseData.stringData() == "off")
+    {
+      return 0;
+      }
+      else if(firebaseData.stringData() == "on")
+      {
+        return 1;
+        }
+   
+    
+     }
+  }
+int relay15_controller()
+{
+  if (Firebase.getString(firebaseData, "/relay15")){
+    Serial.print("State of relay15:");
+    Serial.println(firebaseData.stringData());
+    if(firebaseData.stringData() == "off")
+    {
+      return 0;
+      }
+      else if(firebaseData.stringData() == "on")
+      {
+        return 1;
+        }
+   
+    
+     }
+  }
+ int relay16_controller()
+{
+  if (Firebase.getString(firebaseData, "/relay16")){
+    Serial.print("State of relay16:");
+    Serial.println(firebaseData.stringData());
+    if(firebaseData.stringData() == "off")
+    {
+      return 0;
+      }
+      else if(firebaseData.stringData() == "on")
+      {
+        return 1;
+        }
+    
+    
+     }
+  }

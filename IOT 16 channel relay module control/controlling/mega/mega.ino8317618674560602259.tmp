@@ -1,0 +1,150 @@
+#include <SoftwareSerial.h>
+#define  Rx_PIN  3   // Rx pin of HC-12
+#define  Tx_PIN 2    // Tx pin of HC-12
+SoftwareSerial mySerial(Rx_PIN, Tx_PIN);//rx tx
+
+#define killpin 9 // Please ignore. This is only to activate ext power to transmitter
+
+//***************************************
+const byte numCharsMaster = 32;
+char receivedMasterChars[numCharsMaster];
+char tempMasterChars[numCharsMaster];        // temporary array for use when parsing
+
+// variables to hold the parsed data
+char messageFromMaster[numCharsMaster] = {0};
+int relay1_state;
+int relay2_state;
+int relay3_state;
+int relay4_state;
+int relay5_state;
+int relay6_state;
+int relay7_state;
+int relay8_state;
+int relay9_state;
+int relay10_state;
+int relay11_state;
+int relay12_state;
+int relay13_state;
+int relay14_state;
+int relay15_state;
+int relay16_state;
+boolean newData = true; // invert this on Master arduino
+
+static boolean recvInProgress = false;
+static byte ndx = 0;
+char startMarker = '<';
+char endMarker = '>';
+char rc;
+//***************************************
+unsigned long currentMillis1 = 0;
+unsigned long previousMillis1 = 0;
+long interval1 = 150;           // 150 milliseconds
+
+
+//***************************************
+//============
+void setup() {
+  Serial.begin(9600);
+  mySerial.begin(9600);
+  pinMode(killpin, OUTPUT);// Please ignore. This is only to activate ext power to transmitter
+  digitalWrite(killpin, HIGH);// Please ignore. This is only to activate ext power to transmitter
+}
+//============
+void loop() {
+  recvWithStartEndMarkers();
+  if (newData == true) {
+    strcpy(tempMasterChars, receivedMasterChars);// this temporary copy is necessary to protect the original data because strtok() used in parseData() replaces the commas with \0
+    parseData();
+    showParsedData();
+    newData = false;
+  }
+
+  currentMillis1 = millis();
+  if (currentMillis1 - previousMillis1 > interval1) {
+    previousMillis1 = currentMillis1;
+    sendDataToMaster ();
+  }
+} // end of loop
+//============
+void recvWithStartEndMarkers() {
+  while (mySerial.available() > 0 && newData == false) {
+    rc = mySerial.read();
+    if (recvInProgress == true) {
+      if (rc != endMarker) {
+        receivedMasterChars[ndx] = rc;
+        ndx++;
+        if (ndx >= numCharsMaster) {
+          ndx = numCharsMaster - 1;
+        }
+      }
+      else {
+        receivedMasterChars[ndx] = '\0'; // terminate the string
+        recvInProgress = false;
+        ndx = 0;
+        newData = true;
+      }
+    }
+    else if (rc == startMarker) {
+      recvInProgress = true;
+    }
+  }
+}
+//============
+void parseData() {      // split the data into its parts
+  char * strtokIndx; // this is used by strtok() as an index
+  strtokIndx = strtok(tempMasterChars, ",");     // get the first part - the string
+  strcpy(messageFromMaster, strtokIndx); // copy it to messageFromMaster
+  strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+  relay1_state = atoi(strtokIndx);     // convert this part to an integer
+  strtokIndx = strtok(NULL, ",");
+  relay2_state = atof(strtokIndx);     // convert this part to a float
+  strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+  relay3_state = atoi(strtokIndx);     // convert this part to an integer
+  strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+  relay4_state = atoi(strtokIndx);     // convert this part to an integer
+  strtokIndx = strtok(NULL, ",");
+  relay5_state = atof(strtokIndx);     // convert this part to a float
+  strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+  relay6_state = atoi(strtokIndx);     // convert this part to an integer
+   strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+  relay7_state = atoi(strtokIndx);     // convert this part to an integer
+  strtokIndx = strtok(NULL, ",");
+  relay8_state = atof(strtokIndx);     // convert this part to a float
+  strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+  relay9_state = atoi(strtokIndx);     // convert this part to an integer
+  strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+  relay10_state = atoi(strtokIndx);     // convert this part to an integer
+  strtokIndx = strtok(NULL, ",");
+  relay11_state = atof(strtokIndx);     // convert this part to a float
+  strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+  relay12_state = atoi(strtokIndx);     // convert this part to an integer
+  strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+  relay13_state = atoi(strtokIndx);     // convert this part to an integer
+  strtokIndx = strtok(NULL, ",");
+  relay14_state = atof(strtokIndx);     // convert this part to a float
+  strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+  relay15_state = atoi(strtokIndx);     // convert this part to an integer
+  strtokIndx = strtok(NULL, ","); // this continues where the previous call left off
+  relay16_state = atoi(strtokIndx);     // convert this part to an integer
+ 
+ 
+}
+//============
+void showParsedData() {
+  Serial.print("messageFromMaster ");
+  Serial.print(messageFromMaster);
+  Serial.print("State of relay 1:");
+  Seriall.print(relay1_state);
+}
+//============
+void sendDataToMaster () {
+  mySerial.print('<');
+  mySerial.print("Slave text");
+  mySerial.print(",");
+  mySerial.print(integer1Slave);
+  mySerial.print(",");
+  mySerial.print(float1Slave);
+  mySerial.print(",");
+  mySerial.print(integer2Slave);
+  mySerial.print('>');
+}
